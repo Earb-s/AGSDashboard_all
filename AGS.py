@@ -4,6 +4,7 @@ import base64
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import win32com.client
 import time
 import plotly.express as px
 import plotly.graph_objects as go
@@ -34,6 +35,7 @@ def main():
     st.write('---') 
 
     if choice == "Update Project":
+        stored = pd.DataFrame()
         st.subheader('Project Update')
         col1, col2 ,col3 = st.columns((1,1,1))
         selectmonth = col1.selectbox('Please select month to update', month)
@@ -74,6 +76,7 @@ def main():
 
     elif choice == "Meeting":
         st.subheader('Update meeting in this month')
+        stored2 = pd.DataFrame()
         col7, col8 ,col9 = st.columns((1,1,2))
         selectmonth = col7.selectbox('Please select month to update', month)
         selectID = col7.selectbox('Who are you', ID)
@@ -117,6 +120,7 @@ def main():
         
     elif choice == "Customer Visit":
         st.subheader('Customer Visit in this month')
+        stored3 = pd.DataFrame()
         col10,col11 ,col12 = st.columns((1,1,1))
         selectmonth = col10.selectbox('Please select month to update', month)
         selectID = col10.selectbox('Who are you', ID)
@@ -169,6 +173,7 @@ def main():
         
     elif choice == "Revenue":
         st.subheader('Update Revenue this month')
+        stored4 = pd.DataFrame()
         col13,col14 ,col15 = st.columns((1,1,1))
         selectmonth = col13.selectbox('Please select month to update', month)
         selectID = col13.selectbox('Who are you', ID)
@@ -197,6 +202,7 @@ def main():
     #stored = pd.DataFrame(metadata)
     elif choice == "Expense":
         st.subheader('Update Expense')
+        concat = pd.DataFrame()
         col16,col17 ,col18,col19 = st.columns((1,2,2,2))
         data = r'FOGA.csv'
         dfFOGA = pd.read_csv(data,encoding='utf-8')
