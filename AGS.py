@@ -7,6 +7,7 @@ import numpy as np
 import time
 import plotly.express as px
 import plotly.graph_objects as go
+from streamlit_folium import folium_static
 import folium
 import branca
 
