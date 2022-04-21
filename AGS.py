@@ -314,7 +314,7 @@ def main():
         st.subheader('Summary')       
     
         concat
-        valuesa
+       
 
 if __name__ == '__main__':
     main()
