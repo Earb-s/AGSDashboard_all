@@ -60,8 +60,8 @@ def main():
         ChooseStatus = col2.radio('Select status', Status)
         ReportStatus = col2.radio('Select report status', Report)
         Chooseprojecttype = col2.radio('Select current project type', Projecttype)
-        string = col3.text_area('Project Progress Update', height=150)
         string2 = col3.text_area('Project Progress Plan', height=150)
+        string = col3.text_area('Project Progress Update', height=150)
         string3 = col3.text_area('Next Step', height=150)
         if col3.button('Submit'):
         #st.write(string)
