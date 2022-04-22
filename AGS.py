@@ -62,6 +62,7 @@ def main():
         Chooseprojecttype = col2.radio('Select current project type', Projecttype)
         string = col3.text_area('Project Progress Update', height=150)
         string2 = col3.text_area('Project Progress Plan', height=150)
+        string3 = col3.text_area('Next Step', height=150)
         if col3.button('Submit'):
         #st.write(string)
             metadata = {'Month': [selectmonth],
@@ -71,7 +72,8 @@ def main():
              'Report Status': [ReportStatus],
              'Current Type': [Chooseprojecttype],
              'Project Plan': [string2],
-             'Project Progress': [string],}
+             'Project Progress': [string],
+             'Next Step': [string3],}
             stored = pd.DataFrame(metadata)
             values = stored.values.tolist()
             sheetName = 'project_update'  
