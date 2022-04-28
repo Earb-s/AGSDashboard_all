@@ -118,7 +118,7 @@ def main():
 
             sort_p['Start'] = pd.to_datetime(sort_p['Start'],format='%Y/%m/%d')
             sort_p['Finish'] = pd.to_datetime(sort_p['Finish'],format='%Y/%m/%d')
-            fig = ff.create_gantt(sort_p, width = 250, height= 500,colors = "set3" )
+            fig = ff.create_gantt(sort_p, width = 250, height= 500 )
             #fig.update_layout(paper_bgcolor="LightSteelBlue",)
             fig.update_layout(margin=dict(l=0, r=0, t=100, b=0))
             #case_df = pd.DataFrame(case_list)
