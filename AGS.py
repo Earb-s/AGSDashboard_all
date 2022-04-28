@@ -4,6 +4,7 @@ import base64
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import win32com.client
 import time
 import plotly.express as px
 import plotly.graph_objects as go
@@ -14,6 +15,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import gspread_dataframe as gd
 from datetime import datetime
+import plotly.figure_factory as ff
 
 st.set_page_config(layout="wide")
 col4, col5, col6  = st.columns((5,2,1))
@@ -43,24 +45,35 @@ def main():
         stored = pd.DataFrame()
         st.subheader('Project Update')
         col1, col2 ,col3 = st.columns((1,1,1))
+        
         selectmonth = col1.selectbox('Please select month to update', month)
         selectID = col1.selectbox('Who are you', ID)
         sortedproject = df.loc[df['Name'] == selectID]
         project = sortedproject["Project"].unique()
         selectProject = col1.selectbox('Select Project to update', project)
         st.caption(selectProject)
-        
+        #sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+        #worksheet = sh.worksheet("project_update")
+        #sheet1 = sh.get_worksheet(0)
+        #record = pd.DataFrame(data=sheet1.get_all_records())
+        #sortedmonth_ = record.loc[record['Month'] == selectmonth]
+        #sortedmonth_P = sortedmonth_.loc[sortedmonth_['Project'] == selectProject]
+        #Planofmonth = 'no record'
+        #Planofmonth = sortedmonth_P.iloc[0,6]
+
 
         #col1.write('Month: {}'.format(selectmonth))
         #col1.write('Researcher: {}'.format(selectID))
         #col1.write('Project: {}'.format(selectProject))
-
+        
         Status= df["Status"].unique()
         Projecttype= df["Current type of project"].unique()
         ChooseStatus = col2.radio('Select status', Status)
         ReportStatus = col2.radio('Select report status', Report)
         Chooseprojecttype = col2.radio('Select current project type', Projecttype)
-        string2 = col3.text_area('Project Progress Plan', height=150)
+        
+        
+        
         string = col3.text_area('Project Progress Update', height=150)
         string3 = col3.text_area('Next Step', height=150)
         if col3.button('Submit'):
@@ -71,7 +84,6 @@ def main():
              'Current Status': [ChooseStatus],
              'Report Status': [ReportStatus],
              'Current Type': [Chooseprojecttype],
-             'Project Plan': [string2],
              'Project Progress': [string],
              'Next Step': [string3],}
             stored = pd.DataFrame(metadata)
@@ -79,8 +91,45 @@ def main():
             sheetName = 'project_update'  
             sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+        col1P, col2P = st.columns((1,3,))
+        string2 = col1P.text_area('Project  Plan', height=150)
+        startD = col1P.date_input('Start Date')
+        startD = startD.strftime("%Y/%m/%d")
+        EndD = col1P.date_input('End Date')
+        EndD = EndD.strftime("%Y/%m/%d")
+        storedP = pd.DataFrame()
+        if col1P.button('Submit for plan'):
+        #st.write(string)
+            metadata = {'Researcher': [selectID],
+             'Project': [selectProject],
+             'Plan': [string2],
+             'Start Date': [startD],
+             'End Date': [EndD],}
+            storedP = pd.DataFrame(metadata)
+            values = storedP.values.tolist()
+            sheetName = 'Project Plan'  
+            sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+            sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+            
+            sheet1 = sh.get_worksheet(5)
+            record = pd.DataFrame(data=sheet1.get_all_records())
+           
+            sort_p = record[record['Project'] == selectProject]
+            sort_p = sort_p.iloc[:,2:5]
+
+            sort_p['Start'] = pd.to_datetime(sort_p['Start'],format='%Y/%m/%d')
+            sort_p['Finish'] = pd.to_datetime(sort_p['Finish'],format='%Y/%m/%d')
+            fig = ff.create_gantt(sort_p, width = 250, height= 500)
+            #fig.update_layout(paper_bgcolor="LightSteelBlue",)
+            fig.update_layout(margin=dict(l=0, r=0, t=100, b=0))
+            #case_df = pd.DataFrame(case_list)
+            #case_df
+            sort_p
+            fig.update_yaxes(autorange="reversed")
+            col2P.plotly_chart(fig, use_container_width=True)
         st.subheader('Summary')
-        st.write(stored)
+        st.write(storedP)
+        
         #stored.to_csv('project_update.csv',encoding='utf-8')
         #stored.to_csv('project_update.csv', mode='a', index=True, header=False)
 
@@ -316,7 +365,7 @@ def main():
         st.subheader('Summary')       
     
         concat
-       
+        #valuesa
 
 if __name__ == '__main__':
     main()
