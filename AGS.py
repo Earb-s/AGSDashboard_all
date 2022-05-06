@@ -118,7 +118,7 @@ def main():
 
             sort_p['Start'] = pd.to_datetime(sort_p['Start'],format='%Y/%m/%d')
             sort_p['Finish'] = pd.to_datetime(sort_p['Finish'],format='%Y/%m/%d')
-            fig = ff.create_gantt(sort_p, width = 250, height= 500 )
+            fig = ff.create_gantt(sort_p, width = 250, height= 500)
             #fig.update_layout(paper_bgcolor="LightSteelBlue",)
             fig.update_layout(margin=dict(l=0, r=0, t=100, b=0))
             #case_df = pd.DataFrame(case_list)
@@ -365,6 +365,79 @@ def main():
     
         concat
         #valuesa
-
+        
+    elif choice == "AGS Dashboard":
+        col20,col22 = st.columns((2,4))
+        sheetName = 'Project Plan'  
+        sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+        sheet1 = sh.get_worksheet(0)
+        Up_progress_all = pd.DataFrame(data=sheet1.get_all_records())
+        selectmonth = col20.selectbox('Please select month to see', month)
+        
+        
+        Up_progress = Up_progress_all[['Month','Current Status','Project','Report Status']]
+        mm = Up_progress.groupby(['Month','Current Status'])
+        mm = mm.count()
+        mm = mm.reset_index(level=[0,1])
+        sort_month_project = mm[mm['Month'] == selectmonth]
+        fig1 = px.pie(sort_month_project, values='Project', names='Current Status', title='Monthly Project Status')
+        col20.plotly_chart(fig1,use_container_width=True)
+        rr = Up_progress.groupby(['Month','Report Status'])
+        rr = rr.count()
+        rr = rr.reset_index(level=[0,1])
+        sort_month_report = rr[rr['Month'] == selectmonth]
+        sort_month_report = sort_month_report.iloc[:,1:3]
+        
+        Up_pro = Up_progress_all.groupby(['Month','Current Status','Current Type'])
+        Up_pro = Up_pro.count()
+        Up_pro = Up_pro.reset_index(level=[0,1])
+        Up_pro = Up_pro.reset_index()
+        figpro = px.bar(Up_pro, x="Month", y="Project", color="Current Type", title="AGS Project Status", text_auto=True)
+        figpro.update_layout(showlegend=True)
+        figpro.update_layout(yaxis_visible=False, yaxis_showticklabels=False)
+        col22.plotly_chart(figpro,use_container_width=True)
+        col20.subheader('Report Status')
+        col20.write(sort_month_report)
+        st.subheader('Revenue we get')
+        col23, col24 = st.columns((2,2))
+        sheet4 = sh.get_worksheet(3)
+        sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+        Up_rev= pd.DataFrame(data=sheet4.get_all_records())
+        figrev = px.bar(Up_rev, x="Month", y="Amount", color="Revenue from", title="AGS Revenue")
+        figrev.update_layout(showlegend=False)
+        
+        col23.plotly_chart(figrev,use_container_width=True)
+        #figrevy = px.sunburst(Up_rev, path=['Month', 'Revenue from'], values='Amount',color='Amount')
+        #col24.plotly_chart(figrevy,use_container_width=True)
+        st.subheader('Place we visit this year')
+        sheet3 = sh.get_worksheet(2)
+        sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+        Up_cus= pd.DataFrame(data=sheet3.get_all_records())
+        m = folium.Map(location=[13, 100], zoom_start=6)
+        for indice, row in Up_cus.iterrows():
+            folium.Marker(
+                location=[row["Latitude"], row["Longtitude"]],
+                popup=row['Customer name'],
+                icon=folium.map.Icon(color='yellow')
+                ).add_to(m)
+        st.write('---') 
+        folium_static(m)
+        
+        
+        st.write('---') 
+        st.write('---') 
+        selectmonth = st.selectbox('Please select month to see-', month)
+        sort1= Up_progress_all[Up_progress_all['Month'] == selectmonth]
+        
+        Updated = sort1['Project']
+        st.write('Updated Project')
+        st.write(Updated)
+        st.write('---')
+        st.subheader('See details of each project')
+        
+        project = Up_progress_all["Project"].unique()
+        selectProject = st.selectbox('Select Project to update-', project)
+        sort2= sort1[sort1['Project'] == selectProject]
+        sort2
 if __name__ == '__main__':
     main()
