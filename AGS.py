@@ -367,21 +367,27 @@ def main():
         #valuesa
         
     elif choice == "AGS Dashboard":
-        col20,col22 = st.columns((2,4))
+        col20,col22 = st.columns((4,2))
         sheetName = 'Project Plan'  
         sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
         sheet1 = sh.get_worksheet(0)
         Up_progress_all = pd.DataFrame(data=sheet1.get_all_records())
-        selectmonth = col20.selectbox('Please select month to see', month)
+        col22.subheader('Monthly Status')
+        col20.subheader('All year status')
+        selectmonth = col22.selectbox('Please select month to see', month)
         
         
-        Up_progress = Up_progress_all[['Month','Current Status','Project','Report Status']]
+        Up_progress = Up_progress_all[['Month','Current Status','Project','Report Status','Current Type']]
         mm = Up_progress.groupby(['Month','Current Status'])
         mm = mm.count()
         mm = mm.reset_index(level=[0,1])
         sort_month_project = mm[mm['Month'] == selectmonth]
         fig1 = px.pie(sort_month_project, values='Project', names='Current Status', title='Monthly Project Status')
-        col20.plotly_chart(fig1,use_container_width=True)
+        col22.plotly_chart(fig1,use_container_width=True)
+        
+        #fig2 = px.pie(sort_month_project, values='Project', names='Current Type', title='Monthly Project Status')
+        #col22.plotly_chart(fig2,use_container_width=True)
+        
         rr = Up_progress.groupby(['Month','Report Status'])
         rr = rr.count()
         rr = rr.reset_index(level=[0,1])
@@ -392,14 +398,24 @@ def main():
         Up_pro = Up_pro.count()
         Up_pro = Up_pro.reset_index(level=[0,1])
         Up_pro = Up_pro.reset_index()
-        figpro = px.bar(Up_pro, x="Month", y="Project", color="Current Type", title="AGS Project Status", text_auto=True)
+        figpro = px.bar(Up_pro, x="Month", y="Project", color="Current Type", text_auto=True)
         figpro.update_layout(showlegend=True)
         figpro.update_layout(yaxis_visible=False, yaxis_showticklabels=False)
-        col22.plotly_chart(figpro,use_container_width=True)
-        col20.subheader('Report Status')
-        col20.write(sort_month_report)
-        st.subheader('Revenue we get')
+        col20.plotly_chart(figpro,use_container_width=True)
+        
+        figpro2 = px.bar(Up_pro, x="Month", y="Project", color="Current Status", text_auto=True)
+        figpro2.update_layout(showlegend=True)
+        figpro2.update_layout(yaxis_visible=False, yaxis_showticklabels=False)
+        col20.plotly_chart(figpro2,use_container_width=True)
+        with col22.expander("See Details"):
+            st.subheader('Project Status')
+            st.write(Up_progress)
+        with col22.expander("See Report Status"):
+            st.subheader('Report Status')
+            st.write(sort_month_report)
+        
         col23, col24 = st.columns((2,2))
+        col23.subheader('Revenue we get')
         sheet4 = sh.get_worksheet(3)
         sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
         Up_rev= pd.DataFrame(data=sheet4.get_all_records())
@@ -409,11 +425,21 @@ def main():
         col23.plotly_chart(figrev,use_container_width=True)
         #figrevy = px.sunburst(Up_rev, path=['Month', 'Revenue from'], values='Amount',color='Amount')
         #col24.plotly_chart(figrevy,use_container_width=True)
+        
+        col24.subheader('Expense we spend')
+        col24.caption('Plan vs actual spending')
+        sheet5 = sh.get_worksheet(4)
+        sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
+        Up_exp= pd.DataFrame(data=sheet5.get_all_records())
+        #figexp = px.bar(Up_rev, x="Month", y="Amount", color="Revenue from", title="AGS Revenue")
+        #col24.plotly_chart(figexp,use_container_width=True)
+        col24.write(Up_exp)
+        
         st.subheader('Place we visit this year')
         sheet3 = sh.get_worksheet(2)
         sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
         Up_cus= pd.DataFrame(data=sheet3.get_all_records())
-        m = folium.Map(location=[13, 100], zoom_start=6)
+        m = folium.Map(location=[13, 100], zoom_start=7)
         for indice, row in Up_cus.iterrows():
             folium.Marker(
                 location=[row["Latitude"], row["Longtitude"]],
@@ -422,22 +448,41 @@ def main():
                 ).add_to(m)
         st.write('---') 
         folium_static(m)
+        with st.expander("See Details"):
+            Up_cus
         
         
         st.write('---') 
         st.write('---') 
+        
+        st.subheader('See details of each project')
         selectmonth = st.selectbox('Please select month to see-', month)
         sort1= Up_progress_all[Up_progress_all['Month'] == selectmonth]
+        with st.expander("See Updated Project"):
+            Updated = sort1['Project']
+            st.write('Updated Project')
+            st.write(Updated)
         
-        Updated = sort1['Project']
-        st.write('Updated Project')
-        st.write(Updated)
-        st.write('---')
-        st.subheader('See details of each project')
+        
         
         project = Up_progress_all["Project"].unique()
         selectProject = st.selectbox('Select Project to update-', project)
         sort2= sort1[sort1['Project'] == selectProject]
+        
+        
+        sheetP = sh.get_worksheet(5)
+        record = pd.DataFrame(data=sheetP.get_all_records())
+           
+        sort_p = record[record['Project'] == selectProject]
+        sort_p = sort_p.iloc[:,2:5]
+
+        sort_p['Start'] = pd.to_datetime(sort_p['Start'],format='%Y/%m/%d')
+        sort_p['Finish'] = pd.to_datetime(sort_p['Finish'],format='%Y/%m/%d')
+        figP = ff.create_gantt(sort_p, width = 250, height= 500)
+           
+        figP.update_layout(margin=dict(l=0, r=0, t=100, b=0))
+        figP.update_yaxes(autorange="reversed")
+        st.plotly_chart(figP, use_container_width=True)
         sort2
 if __name__ == '__main__':
     main()
