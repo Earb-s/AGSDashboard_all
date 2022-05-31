@@ -4,6 +4,7 @@ import base64
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import win32com.client
 import time
 import plotly.express as px
 import plotly.graph_objects as go
@@ -67,8 +68,11 @@ def main():
         
         Status= df["Status"].unique()
         Projecttype= df["Current type of project"].unique()
+        ProgressStatus = df['On progress status'].unique()
         ChooseStatus = col2.radio('Select status', Status)
+        ChooseProgressStatus = col2.radio('On progress status', ProgressStatus)
         ReportStatus = col2.radio('Select report status', Report)
+        
         Chooseprojecttype = col2.radio('Select current project type', Projecttype)
         
         
@@ -84,7 +88,8 @@ def main():
              'Report Status': [ReportStatus],
              'Current Type': [Chooseprojecttype],
              'Project Progress': [string],
-             'Next Step': [string3],}
+             'Next Step': [string3],
+             'ProgressStatus' : [ChooseProgressStatus],}
             stored = pd.DataFrame(metadata)
             values = stored.values.tolist()
             sheetName = 'project_update'  
