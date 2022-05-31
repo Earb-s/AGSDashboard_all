@@ -406,7 +406,7 @@ def main():
         figpro = px.bar(Up_pro, x="Month", y="Project", color="Current Type", text_auto=True)
         figpro.update_layout(showlegend=True)
         figpro.update_layout(yaxis_visible=False, yaxis_showticklabels=False)
-        col20.plotly_chart(figpro,use_container_width=False)
+        col20.plotly_chart(figpro,use_container_width=True)
         
         figpro2 = px.bar(Up_pro, x="Month", y="Project", color="Current Status", text_auto=True)
         figpro2.update_layout(showlegend=True)
