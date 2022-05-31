@@ -95,6 +95,7 @@ def main():
             sheetName = 'project_update'  
             sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+            st.balloons()
         col1P, col2P = st.columns((1,3,))
         string2 = col1P.text_area('Project  Plan', height=150)
         startD = col1P.date_input('Start Date')
@@ -131,6 +132,7 @@ def main():
             sort_p
             fig.update_yaxes(autorange="reversed")
             col2P.plotly_chart(fig, use_container_width=True)
+            st.balloons()
         st.subheader('Summary')
         st.write(storedP)
         
@@ -179,6 +181,7 @@ def main():
             sheetName = 'meeting_update'  
             sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+            st.balloons()
             #stored2.to_csv('meeting_update.csv',encoding='utf-8')
             #stored2.to_csv('meeting_update.csv', mode='a', index=True, header=False)
         st.subheader('Summary')
@@ -240,6 +243,7 @@ def main():
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
             #stored3.to_csv('Customer_update.csv',encoding='utf-8')
             #stored3.to_csv('Customer_update.csv', mode='a', index=True, header=False)
+            st.balloons()
         st.subheader('Summary')       
         st.write(stored3)
         
@@ -264,6 +268,7 @@ def main():
             sheetName = 'Revenue_update'  
             sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+            st.balloons()
             #stored4.to_csv('Revenue_update.csv',encoding='utf-8')
             #stored4.to_csv('Revenue_update.csv', mode='a', index=True, header=False)
         st.subheader('Summary')       
@@ -363,6 +368,7 @@ def main():
             sheetName = 'Expense_update'  
             sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
             sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+            st.balloons()
             #concat2.to_csv('Expense_update.csv',encoding='utf-8')
             #concat3.to_csv('Expense_update.csv', mode='a', index=True, header=False)
         
