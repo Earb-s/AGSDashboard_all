@@ -15,7 +15,7 @@ import gspread
 import gspread_dataframe as gd
 from datetime import datetime
 import plotly.figure_factory as ff
-import win32com.client
+
 
 st.set_page_config(layout="wide")
 col4, col5, col6  = st.columns((5,2,1))
