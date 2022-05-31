@@ -372,7 +372,7 @@ def main():
         #valuesa
         
     elif choice == "AGS Dashboard":
-        col20,col22 = st.columns((4,2))
+        col20,col22 = st.columns((2,2))
         sheetName = 'Project Plan'  
         sh = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vPlnq902WzI7qWPCJjcf84bCytEqkWURL6b7RN9axXw/edit?usp=sharing")
         sheet1 = sh.get_worksheet(0)
